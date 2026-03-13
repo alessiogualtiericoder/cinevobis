@@ -13,7 +13,6 @@ class userObj {
     private $idProfilo;
     private $db;
 
-    // Costruttore con username e DB obbligatori, tutto il resto opzionale
     public function __construct($db, $username, $password = null, $nome = null, $cognome = null,
                                 $indirizzo = null, $citta = null, $cap = null,
                                 $email = null, $telefono = null, $attivo = null,
@@ -32,7 +31,6 @@ class userObj {
         $this->idProfilo     = $idProfilo;
     }
 
-    // Getter generico
     public function get($property) {
         if (property_exists($this, $property) && $property !== 'db') {
             return $this->$property;
@@ -40,7 +38,6 @@ class userObj {
         return null;
     }
 
-    // Setter generico
     public function set($property, $value) {
         if (property_exists($this, $property) && $property !== 'db' && $property !== 'username') {
             if ($property === 'password') {
@@ -59,20 +56,17 @@ class userObj {
         return false;
     }
 
-    // Crea il record in sessioni
     public function setDataLogout($dataLogout, $value, $idSessione) {
-
         $this->$dataLogout = $value;
 
         $sql = "UPDATE sessioni SET dataLogout = :value WHERE idSessione = :id_s";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
-            ':value'    => $value,
-            ':id_s'     => $idSessione
+            ':value' => $value,
+            ':id_s'  => $idSessione
         ]);
     }
 
-    // Inserisce un nuovo utente nel DB
     public function create() {
         $sql = "INSERT INTO utenti 
                     (username, password, nome, cognome, indirizzo, citta, cap, email, telefono, attivo, idProfilo) 
@@ -81,43 +75,82 @@ class userObj {
 
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
-            ':username'      => $this->username,
-            ':password'      => $this->password,
-            ':nome'          => $this->nome,
-            ':cognome'       => $this->cognome,
-            ':indirizzo'     => $this->indirizzo,
-            ':citta'         => $this->citta,
-            ':cap'           => $this->cap,
-            ':email'         => $this->email,
-            ':telefono'      => $this->telefono,
-            ':attivo'        => $this->attivo,
-            ':idProfilo'     => $this->idProfilo
+            ':username'  => $this->username,
+            ':password'  => $this->password,
+            ':nome'      => $this->nome,
+            ':cognome'   => $this->cognome,
+            ':indirizzo' => $this->indirizzo,
+            ':citta'     => $this->citta,
+            ':cap'       => $this->cap,
+            ':email'     => $this->email,
+            ':telefono'  => $this->telefono,
+            ':attivo'    => $this->attivo,
+            ':idProfilo' => $this->idProfilo
         ]);
     }
 
-    // Inserisce un nuovo record in sessioni
     public function createDataLogin($value, $idSessione, $idUtente) {
         $sql = "INSERT INTO sessioni (idSessione, idUtente, dataLogin) VALUES (:id_s, :id_u, :dataLogin)";
         $stmt = $this->db->prepare($sql);
         return $stmt->execute([
-            ':id_s'         => $idSessione,
-            ':id_u'         => $idUtente,
-            ':dataLogin'    => $value
+            ':id_s'      => $idSessione,
+            ':id_u'      => $idUtente,
+            ':dataLogin' => $value
         ]);
-    }    
+    }
 
     public function readAll() {
-        $sql  = "SELECT username, nome, cognome, email, idProfilo FROM utenti";
+        $sql  = "SELECT username, nome, cognome, indirizzo, citta, cap, email, telefono, attivo FROM utenti";
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
         return $stmt->fetchAll();
     }
 
     public function findByUsername() {
-        $sql = "SELECT id, username, password FROM utenti WHERE username = :username";
+        $sql = "SELECT id, username, password, nome, cognome, indirizzo, citta, cap, email, telefono, attivo, idProfilo
+                FROM utenti
+                WHERE username = :username";
+
         $stmt = $this->db->prepare($sql);
-        $stmt->execute([':username' => $this->username]);
+        $stmt->bindParam(':username', $this->username);
+        $stmt->execute();
+
         return $stmt->fetch();
+    }
+
+    public function readAccess() {
+        $sql = "SELECT username, dataLogin, dataLogout 
+                FROM sessioni s
+                JOIN utenti u ON u.id = s.idUtente";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
+
+    public function update($usernameOriginale) {
+        $sql = "UPDATE utenti SET
+                    nome      = :nome,
+                    cognome   = :cognome,
+                    indirizzo = :indirizzo,
+                    citta     = :citta,
+                    cap       = :cap,
+                    email     = :email,
+                    telefono  = :telefono,
+                    attivo    = :attivo
+                WHERE username = :username";
+
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([
+            ':nome'      => $this->nome,
+            ':cognome'   => $this->cognome,
+            ':indirizzo' => $this->indirizzo,
+            ':citta'     => $this->citta,
+            ':cap'       => $this->cap,
+            ':email'     => $this->email,
+            ':telefono'  => $this->telefono,
+            ':attivo'    => $this->attivo,
+            ':username'  => $usernameOriginale
+        ]);
     }
 
     public function delete() {
@@ -126,18 +159,17 @@ class userObj {
         return $stmt->execute([':username' => $this->username]);
     }
 
-    // Stampa
     public function print() {
-        echo "<b>Username: </b>"      . $this->username      . "<br>";
-        echo "<b>Nome: </b>"          . $this->nome          . "<br>";
-        echo "<b>Cognome: </b>"       . $this->cognome       . "<br>";
-        echo "<b>Indirizzo: </b>"     . $this->indirizzo     . "<br>";
-        echo "<b>Città: </b>"         . $this->citta         . "<br>";
-        echo "<b>CAP: </b>"           . $this->cap           . "<br>";
-        echo "<b>Email: </b>"         . $this->email         . "<br>";
-        echo "<b>Telefono: </b>"      . $this->telefono      . "<br>";
-        echo "<b>Attivo: </b>"        . $this->attivo        . "<br>";
-        echo "<b>Ruolo: </b>"         . $this->idProfilo     . "<br>";
+        echo "<b>Username: </b>"  . $this->username  . "<br>";
+        echo "<b>Nome: </b>"      . $this->nome      . "<br>";
+        echo "<b>Cognome: </b>"   . $this->cognome   . "<br>";
+        echo "<b>Indirizzo: </b>" . $this->indirizzo . "<br>";
+        echo "<b>Città: </b>"     . $this->citta     . "<br>";
+        echo "<b>CAP: </b>"       . $this->cap       . "<br>";
+        echo "<b>Email: </b>"     . $this->email     . "<br>";
+        echo "<b>Telefono: </b>"  . $this->telefono  . "<br>";
+        echo "<b>Attivo: </b>"    . $this->attivo    . "<br>";
+        echo "<b>Ruolo: </b>"     . $this->idProfilo . "<br>";
     }
 }
 ?>

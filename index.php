@@ -16,16 +16,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Verifica l'hash della password inserita con l'hash della password salvata nel DB
         if ($utente && password_verify($password, $utente['password'])) {
-            session_regenerate_id(true);
+            if ($utente['idProfilo'] == 1) {
+                session_regenerate_id(true);
 
-            $idSessione = session_id();
-            $_SESSION['id_utente'] = $utente['id'];
-            $_SESSION['username']  = $utente['username'];
+                $idSessione = session_id();
+                $_SESSION['id_utente'] = $utente['id'];
+                $_SESSION['username']  = $utente['username'];
 
-            $user->createDataLogin(date('Y-m-d H:i:s'), $idSessione, $utente['id']);
+                $user->createDataLogin(date('Y-m-d H:i:s'), $idSessione, $utente['id']);
 
-            header("Location: privateArea.php");
-            exit();
+                header("Location: privateArea.php");
+                exit();
+            } else {
+                $errore = "Profilo non amministratore";
+            }        
         } else {
             $errore = "Dati non validi";
         }

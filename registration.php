@@ -22,7 +22,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $errore = "Compila tutti i campi obbligatori";
     } else {
         try {
-            // DB, username, password,  nome, cognome, indirizzo, città, cap, email, telefono, attivo, ruolo
+            // DB, username, password, nome, cognome, indirizzo, città, cap, email, telefono, attivo, ruolo
             $user = new userObj($conn, $username, $password, $nome, $cognome, $indirizzo, $citta, $cap, $email, $telefono, $attivo, $ruolo);
             $user->create();
 
@@ -40,7 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <body>
     <h1>Registrazione</h1>
     <?php if ($errore)   echo "<p style='color:red'>" . htmlspecialchars($errore) . "</p>"; ?>
-    <?php if ($messaggio) echo "<p style='color:green'>" . $messaggio . "</p>"; ?>
+    <?php if ($messaggio) echo "<p style='color:green'>" . htmlspecialchars($messaggio) . "</p>"; ?>
 
     <form action="" method="POST">
         Username:  <input type="text"     name="username"  required><br><br>
