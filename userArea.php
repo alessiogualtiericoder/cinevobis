@@ -19,6 +19,7 @@ require_once("userObj.php");
     <?php require_once("header.php"); ?>
 
     <h1>Ciao <?= htmlspecialchars($_SESSION['username']) ?></h1>
-    
+
+    <?php require_once("footer.php"); ?>
 </body>
 </html>
