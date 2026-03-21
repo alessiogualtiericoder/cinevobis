@@ -1,0 +1,31 @@
+:root {
+    --primary-color: #f8f9fa;
+    --secondary-color: #2d3436;
+    --font-family: 'Inter', -apple-system, sans-serif;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: var(--font-family);
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    line-height: 1.8;
+}
+
+.navbar,
+footer {
+    width: 100%;
+    margin: 0;
+}
+
+.table {
+    --bs-table-bg: var(--primary-color);
+    --bs-table-striped-bg: #eef0f2;
+    --bs-table-hover-bg: #e9ecef;
+}
+
+.registration-card {
+    max-width: 600px;
+    width: 100%;
+}

@@ -1,0 +1,49 @@
+<?php
+session_start();
+date_default_timezone_set('Europe/Rome');
+require_once(__DIR__ . '/../config/connection.php');
+require_once(__DIR__ . '/../includes/userObj.php');
+
+$username = $_SESSION["username"] ?? '';
+
+if (!$username) {
+    header("Location: /index.php");
+    exit();
+}
+
+if (isset($_POST['upload']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
+    // gestione upload immagine
+}
+?>
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aggiungi film</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="../style.css">
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <?php require_once(__DIR__ . '/../includes/header.php'); ?>
+
+    <div class="container mt-4 flex-grow-1">
+
+        <form method="POST" enctype="multipart/form-data">
+            <label for="image" class="form-label">Inserisci una foto:</label>
+            <div class="d-flex gap-2 align-items-center">
+                <input type="file" name="image" id="image" class="form-control w-auto" accept="image/*">
+                <button type="submit" name="upload" class="btn btn-primary">Carica</button>
+                <button type="submit" name="cancel" class="btn btn-secondary">Annulla</button>
+            </div>
+        </form>
+
+    </div>
+
+    <?php require_once(__DIR__ . '/../includes/footer.php'); ?>
+
+</body>
+</html>
