@@ -2,9 +2,10 @@
 session_start();
 date_default_timezone_set('Europe/Rome');
 
-$username = $_SESSION['username'] ?? '';
+$username   = $_SESSION['username']   ?? '';
+$id_profilo = $_SESSION['id_profilo'] ?? 0;
 
-if (!$username) {
+if (!$username || $id_profilo != 1) {
     header("Location: /index.php");
     exit();
 }
@@ -20,10 +21,12 @@ if (!$username) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="../style.css">
 </head>
-<body class="d-flex flex-column min-vh-100 bg-light"> <?php require_once(__DIR__ . '/../includes/header.php'); ?>
+<body class="d-flex flex-column min-vh-100">
+
+    <?php require_once(__DIR__ . '/../includes/header.php'); ?>
 
     <main class="container flex-grow-1 d-flex flex-column justify-content-center py-5">
-        
+
         <div class="row mb-5">
             <div class="col-12 text-center">
                 <h1 class="fw-bold">Profilo Amministratore</h1>
@@ -32,10 +35,10 @@ if (!$username) {
         </div>
 
         <div class="row g-4 justify-content-center">
-            
+
             <div class="col-md-5">
                 <a href="addFilmArea.php" class="text-decoration-none h-100 d-block">
-                    <div class="card border-0 shadow-sm text-center p-4 h-100 hover-shadow transition">
+                    <div class="card border-0 shadow-sm text-center p-4 h-100">
                         <div class="card-body d-flex flex-column justify-content-center">
                             <div class="display-4 mb-3">🎬</div>
                             <h2 class="fw-bold mb-3 text-dark">Aggiungi film</h2>
@@ -47,7 +50,7 @@ if (!$username) {
 
             <div class="col-md-5">
                 <a href="sessionArea.php" class="text-decoration-none h-100 d-block">
-                    <div class="card border-0 shadow-sm text-center p-4 h-100 hover-shadow transition">
+                    <div class="card border-0 shadow-sm text-center p-4 h-100">
                         <div class="card-body d-flex flex-column justify-content-center">
                             <div class="display-4 mb-3">👥</div>
                             <h2 class="fw-bold mb-3 text-dark">Gestione sessioni</h2>

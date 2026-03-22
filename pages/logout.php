@@ -10,14 +10,18 @@ if (!isset($_SESSION['username'])) {
 }
 
 try {
-    $idSessione = session_id();
-    $username = $_SESSION['username'];
+    $id_sessione = session_id();
+    $username    = $_SESSION['username'];
 
     $user = new userObj($conn, $username);
-    $user->setDataLogout('dataLogout', date('Y-m-d H:i:s'), $idSessione);
+    $user->setDataLogout(date('Y-m-d H:i:s'), $id_sessione);
 
     session_destroy();
     header("Location: /index.php");
     exit();
-} catch (PDOException $e) { }
+} catch (PDOException $e) {
+    session_destroy();
+    header("Location: /index.php");
+    exit();
+}
 ?>

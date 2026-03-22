@@ -40,11 +40,10 @@ $sessioni = $user->readAccess($righe);
                     <th>Username</th>
                     <th>Nome</th>
                     <th>Cognome</th>
-                    <th>Indirizzo</th>
                     <th>Città</th>
-                    <th>CAP</th>
                     <th>Email</th>
-                    <th>Telefono</th>
+                    <th>Profilo</th>
+                    <th>Nazione</th>
                     <th>Attivo</th>
                     <th>Modifica</th>
                 </tr>
@@ -53,14 +52,13 @@ $sessioni = $user->readAccess($righe);
                 <?php foreach ($utenti as $utente): ?>
                     <tr>
                         <td><?= htmlspecialchars($utente['username']) ?></td>
-                        <td><?= htmlspecialchars($utente['nome']) ?></td>
-                        <td><?= htmlspecialchars($utente['cognome']) ?></td>
-                        <td><?= htmlspecialchars($utente['indirizzo']) ?></td>
-                        <td><?= htmlspecialchars($utente['citta']) ?></td>
-                        <td><?= htmlspecialchars($utente['cap']) ?></td>
-                        <td><?= htmlspecialchars($utente['email']) ?></td>
-                        <td><?= htmlspecialchars($utente['telefono']) ?></td>
-                        <td><?= htmlspecialchars($utente['attivo']) ?></td>
+                        <td><?= htmlspecialchars($utente['nome'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($utente['cognome'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($utente['citta'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($utente['email'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($utente['nome_profilo'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($utente['nome_nazione'] ?? '') ?></td>
+                        <td><?= $utente['attivo'] ? 'Sì' : 'No' ?></td>
                         <td>
                             <form method="POST" action="editUser.php">
                                 <input type="hidden" name="username" value="<?= htmlspecialchars($utente['username']) ?>">
@@ -72,17 +70,14 @@ $sessioni = $user->readAccess($righe);
             </tbody>
         </table>
 
-        <!-- Sessioni -->
         <p class="fs-5 fw-bold mb-3">Sessioni registrate</p>
 
         <form action="" method="POST" class="d-flex align-items-center gap-2 mb-3">
             <label class="mb-0">Righe</label>
             <select name="righe" class="form-select form-select-sm w-auto">
-                <option value="5"   <?= $righe == 5   ? 'selected' : '' ?>>5</option>
-                <option value="10"  <?= $righe == 10  ? 'selected' : '' ?>>10</option>
-                <option value="25"  <?= $righe == 25  ? 'selected' : '' ?>>25</option>
-                <option value="50"  <?= $righe == 50  ? 'selected' : '' ?>>50</option>
-                <option value="100" <?= $righe == 100 ? 'selected' : '' ?>>100</option>
+                <?php foreach ([5, 10, 25, 50, 100] as $r): ?>
+                    <option value="<?= $r ?>" <?= $righe == $r ? 'selected' : '' ?>><?= $r ?></option>
+                <?php endforeach; ?>
             </select>
             <button type="submit" class="btn btn-primary btn-sm">Invia</button>
         </form>
@@ -99,8 +94,8 @@ $sessioni = $user->readAccess($righe);
                 <?php foreach ($sessioni as $sessione): ?>
                     <tr>
                         <td><?= htmlspecialchars($sessione['username']) ?></td>
-                        <td><?= htmlspecialchars($sessione['dataLogin']) ?></td>
-                        <td><?= htmlspecialchars($sessione['dataLogout']) ?></td>
+                        <td><?= htmlspecialchars($sessione['data_login'] ?? '') ?></td>
+                        <td><?= htmlspecialchars($sessione['data_logout'] ?? '—') ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>

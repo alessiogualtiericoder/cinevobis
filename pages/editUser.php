@@ -19,37 +19,31 @@ if (isset($_POST['indietro'])) {
     exit();
 }
 
+$nazioni = [];
+try {
+    $stmt    = $conn->query("SELECT id_nazione, nome_nazione FROM nazioni ORDER BY nome_nazione");
+    $nazioni = $stmt->fetchAll();
+} catch (PDOException $e) {}
+
 if (isset($_POST['salva'])) {
-    $nome      = trim($_POST['nome']      ?? '');
-    $cognome   = trim($_POST['cognome']   ?? '');
-    $indirizzo = trim($_POST['indirizzo'] ?? '');
-    $citta     = trim($_POST['citta']     ?? '');
-    $cap       = trim($_POST['cap']       ?? '');
-    $email     = trim($_POST['email']     ?? '');
-    $telefono  = trim($_POST['telefono']  ?? '');
-    $attivo    = $_POST['attivo'] ?? 0;
+    $nome       = trim($_POST['nome']       ?? '');
+    $cognome    = trim($_POST['cognome']    ?? '');
+    $citta      = trim($_POST['citta']      ?? '');
+    $email      = trim($_POST['email']      ?? '');
+    $id_nazione = $_POST['id_nazione']      ?? null;
+    $attivo     = $_POST['attivo']          ?? 0;
 
     if (!$nome || !$cognome || !$email) {
         $errore = "Nome, cognome ed email sono obbligatori";
     } else {
         try {
             $userUpdate = new userObj(
-                $conn,
-                $username,
-                null,
-                $nome,
-                $cognome,
-                $indirizzo,
-                $citta,
-                $cap,
-                $email,
-                $telefono,
-                $attivo
+                $conn, $username, null,
+                $nome, $cognome, $citta, $email,
+                $attivo, null, $id_nazione ?: null
             );
-
             $userUpdate->update($username);
             $messaggio = "Utente aggiornato";
-
         } catch (PDOException $e) {
             $errore = "Errore: " . $e->getMessage();
         }
@@ -75,11 +69,11 @@ if (!$utente) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="../style.css">
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body>
 
     <?php require_once(__DIR__ . '/../includes/header.php'); ?>
 
-    <div class="container d-flex justify-content-center align-items-start flex-grow-1 py-5">
+    <div class="container flex-grow-1 d-flex justify-content-center align-items-center">
         <div class="card shadow-sm border-0 p-4" style="width: 100%; max-width: 640px;">
             <div class="card-body">
 
@@ -102,64 +96,62 @@ if (!$utente) {
 
                     <div class="row g-3">
 
-                        <!-- Username (full width, disabilitato) -->
                         <div class="col-12">
                             <label class="form-label fw-semibold">Username</label>
                             <input type="text" class="form-control" value="<?= htmlspecialchars($utente['username']) ?>" disabled>
                         </div>
 
-                        <!-- Nome | Cognome -->
                         <div class="col-6">
                             <label class="form-label fw-semibold">Nome</label>
-                            <input type="text" name="nome" class="form-control" value="<?= htmlspecialchars($utente['nome']) ?>" required>
+                            <input type="text" name="nome" class="form-control"
+                                   value="<?= htmlspecialchars($utente['nome'] ?? '') ?>" required>
                         </div>
                         <div class="col-6">
                             <label class="form-label fw-semibold">Cognome</label>
-                            <input type="text" name="cognome" class="form-control" value="<?= htmlspecialchars($utente['cognome']) ?>" required>
+                            <input type="text" name="cognome" class="form-control"
+                                   value="<?= htmlspecialchars($utente['cognome'] ?? '') ?>" required>
                         </div>
 
-                        <!-- Email | Telefono -->
                         <div class="col-6">
                             <label class="form-label fw-semibold">Email</label>
-                            <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($utente['email']) ?>" required>
+                            <input type="email" name="email" class="form-control"
+                                   value="<?= htmlspecialchars($utente['email'] ?? '') ?>" required>
                         </div>
                         <div class="col-6">
-                            <label class="form-label fw-semibold">Telefono</label>
-                            <input type="tel" name="telefono" class="form-control" value="<?= htmlspecialchars($utente['telefono']) ?>" maxlength="20">
-                        </div>
-
-                        <!-- Indirizzo (full width) -->
-                        <div class="col-12">
-                            <label class="form-label fw-semibold">Indirizzo</label>
-                            <input type="text" name="indirizzo" class="form-control" value="<?= htmlspecialchars($utente['indirizzo']) ?>">
-                        </div>
-
-                        <!-- Città | CAP -->
-                        <div class="col-8">
                             <label class="form-label fw-semibold">Città</label>
-                            <input type="text" name="citta" class="form-control" value="<?= htmlspecialchars($utente['citta']) ?>">
-                        </div>
-                        <div class="col-4">
-                            <label class="form-label fw-semibold">CAP</label>
-                            <input type="text" name="cap" class="form-control" value="<?= htmlspecialchars($utente['cap']) ?>" maxlength="10">
+                            <input type="text" name="citta" class="form-control"
+                                   value="<?= htmlspecialchars($utente['citta'] ?? '') ?>">
                         </div>
 
-                        <!-- Attivo -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Nazione</label>
+                            <select name="id_nazione" class="form-select">
+                                <option value="">— Seleziona —</option>
+                                <?php foreach ($nazioni as $n): ?>
+                                    <option value="<?= (int)$n['id_nazione'] ?>"
+                                        <?= $utente['id_nazione'] == $n['id_nazione'] ? 'selected' : '' ?>>
+                                        <?= htmlspecialchars($n['nome_nazione']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+
                         <div class="col-12">
                             <label class="form-label fw-semibold">Attivo</label>
                             <div class="d-flex gap-3">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="attivo" id="attivoSi" value="1" <?= $utente['attivo'] == 1 ? 'checked' : '' ?>>
+                                    <input class="form-check-input" type="radio" name="attivo" id="attivoSi" value="1"
+                                           <?= ($utente['attivo'] ?? 0) == 1 ? 'checked' : '' ?>>
                                     <label class="form-check-label" for="attivoSi">Sì</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="attivo" id="attivoNo" value="0" <?= $utente['attivo'] == 0 ? 'checked' : '' ?>>
+                                    <input class="form-check-input" type="radio" name="attivo" id="attivoNo" value="0"
+                                           <?= ($utente['attivo'] ?? 0) == 0 ? 'checked' : '' ?>>
                                     <label class="form-check-label" for="attivoNo">No</label>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Bottoni -->
                         <div class="col-12 d-flex gap-2 mt-2">
                             <button type="submit" name="salva" class="btn btn-primary">Salva modifiche</button>
                             <button type="submit" name="indietro" class="btn btn-secondary">Indietro</button>

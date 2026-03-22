@@ -5,24 +5,27 @@ require_once(__DIR__ . '/../includes/userObj.php');
 $errore    = '';
 $messaggio = '';
 
+$nazioni = [];
+try {
+    $stmt    = $conn->query("SELECT id_nazione, nome_nazione FROM nazioni ORDER BY nome_nazione");
+    $nazioni = $stmt->fetchAll();
+} catch (PDOException $e) {}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username  = trim($_POST['username']  ?? '');
-    $password  = trim($_POST['password']  ?? '');
-    $nome      = trim($_POST['nome']      ?? '');
-    $cognome   = trim($_POST['cognome']   ?? '');
-    $indirizzo = trim($_POST['indirizzo'] ?? '');
-    $email     = trim($_POST['email']     ?? '');
-    $telefono  = trim($_POST['telefono']  ?? '');
-    $attivo    = $_POST['attivo'] ?? 1;
-    $citta     = trim($_POST['citta']     ?? '');
-    $cap       = trim($_POST['cap']       ?? '');
-    $ruolo     = 2;
+    $username   = trim($_POST['username']   ?? '');
+    $password   = trim($_POST['password']   ?? '');
+    $nome       = trim($_POST['nome']       ?? '');
+    $cognome    = trim($_POST['cognome']    ?? '');
+    $citta      = trim($_POST['citta']      ?? '');
+    $email      = trim($_POST['email']      ?? '');
+    $id_nazione = $_POST['id_nazione']      ?? null;
+    $id_profilo = 2; // utente standard
 
     if (!$username || !$password || !$nome || !$cognome || !$email) {
         $errore = "Compila tutti i campi obbligatori";
     } else {
         try {
-            $user = new userObj($conn, $username, $password, $nome, $cognome, $indirizzo, $citta, $cap, $email, $telefono, $attivo, $ruolo);
+            $user = new userObj($conn, $username, $password, $nome, $cognome, $citta, $email, 1, $id_profilo, $id_nazione ?: null);
             $user->create();
             $messaggio = "Registrazione completata";
         } catch (PDOException $e) {
@@ -42,9 +45,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <link rel="stylesheet" href="../style.css">
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body>
 
-    <div class="container d-flex justify-content-center align-items-center flex-grow-1 py-5 min-vh-100">
+    <?php require_once(__DIR__ . '/../includes/header.php'); ?>
+
+    <div class="container flex-grow-1 d-flex justify-content-center align-items-center">
         <div class="card shadow-sm border-0 p-4" style="width: 100%; max-width: 640px;">
             <div class="card-body">
 
@@ -68,46 +73,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <div class="row g-3">
 
                         <div class="col-6">
-                            <label class="form-label fw-semibold">Username</label>
+                            <label class="form-label fw-semibold">Username <span>*</span></label>
                             <input type="text" name="username" class="form-control" required>
                         </div>
                         <div class="col-6">
-                            <label class="form-label fw-semibold">Password</label>
+                            <label class="form-label fw-semibold">Password <span>*</span></label>
                             <input type="password" name="password" class="form-control" required>
                         </div>
 
                         <div class="col-6">
-                            <label class="form-label fw-semibold">Nome</label>
+                            <label class="form-label fw-semibold">Nome <span>*</span></label>
                             <input type="text" name="nome" class="form-control" required>
                         </div>
                         <div class="col-6">
-                            <label class="form-label fw-semibold">Cognome</label>
+                            <label class="form-label fw-semibold">Cognome <span>*</span></label>
                             <input type="text" name="cognome" class="form-control" required>
                         </div>
 
                         <div class="col-6">
-                            <label class="form-label fw-semibold">Email</label>
+                            <label class="form-label fw-semibold">Email <span>*</span></label>
                             <input type="email" name="email" class="form-control" placeholder="esempio@mail.it" required>
                         </div>
                         <div class="col-6">
-                            <label class="form-label fw-semibold">Telefono</label>
-                            <input type="tel" name="telefono" class="form-control" maxlength="20">
-                        </div>
-
-                        <div class="col-12">
-                            <label class="form-label fw-semibold">Indirizzo</label>
-                            <input type="text" name="indirizzo" class="form-control">
-                        </div>
-                        <div class="col-8">
                             <label class="form-label fw-semibold">Città</label>
                             <input type="text" name="citta" class="form-control">
                         </div>
-                        <div class="col-4">
-                            <label class="form-label fw-semibold">CAP</label>
-                            <input type="text" name="cap" class="form-control" maxlength="10">
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">Nazione</label>
+                            <select name="id_nazione" class="form-select">
+                                <option value="">— Seleziona —</option>
+                                <?php foreach ($nazioni as $n): ?>
+                                    <option value="<?= (int)$n['id_nazione'] ?>">
+                                        <?= htmlspecialchars($n['nome_nazione']) ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
 
-                        <div class="col-12 mt-5">
+                        <div class="text-center mt-4">
+                            <input type="checkbox" required>
+                            <label for="termini">Accetto l'Informativa sulla <a href="privacy.php">Privacy</a> e i <a href="terms_of_service.php">Termini di servizio</a> di Cinevobis</label>
+                        </div>
+
+                        <div class="col-12 mt-4">
                             <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">Crea Account</button>
                         </div>
 
@@ -123,6 +132,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
         </div>
     </div>
+
+    <?php require_once(__DIR__ . '/../includes/footer.php'); ?>
 
 </body>
 </html>

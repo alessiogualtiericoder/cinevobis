@@ -11,6 +11,9 @@ body {
     background-color: var(--primary-color);
     color: var(--secondary-color);
     line-height: 1.8;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 .navbar,
@@ -23,9 +26,4 @@ footer {
     --bs-table-bg: var(--primary-color);
     --bs-table-striped-bg: #eef0f2;
     --bs-table-hover-bg: #e9ecef;
-}
-
-.registration-card {
-    max-width: 600px;
-    width: 100%;
 }
