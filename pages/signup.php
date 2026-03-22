@@ -50,8 +50,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     <?php require_once(__DIR__ . '/../includes/header.php'); ?>
 
-    <div class="container flex-grow-1 d-flex justify-content-center align-items-center">
-        <div class="card shadow-sm border-0 p-4" style="width: 100%; max-width: 640px;">
+    <div class="container flex-grow-1 d-flex justify-content-center align-items-start align-items-md-center py-4">
+        <div class="card shadow-sm border-0 p-3 p-md-4" style="width: 100%; max-width: 640px;">
             <div class="card-body">
 
                 <h4 class="fw-bold mb-2">Crea un account</h4>
@@ -114,7 +114,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                         <div class="text-center mt-4">
                             <input type="checkbox" required>
-                            <label for="termini">Accetto l'Informativa sulla <a href="privacy.php">Privacy</a> e i <a href="terms_of_service.php">Termini di servizio</a> di Cinevobis</label>
+                            <label for="termini">Accetto l'Informativa sulla <a href="privacy.php" class="text-decoration-none fw-bold">
+                                Privacy
+                            </a> e i <a href="terms_of_service.php" class="text-decoration-none fw-bold">
+                                Termini di servizio
+                            </a> di Cinevobis</label>
                         </div>
 
                         <div class="col-12 mt-4">
