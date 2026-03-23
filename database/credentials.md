@@ -1,4 +1,4 @@
 alessio -> vobis
 emma -> sato
 luca -> leone
-yuru -> japan
+yoru -> japan
