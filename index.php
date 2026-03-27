@@ -6,9 +6,6 @@ if (isset($_SESSION['username'])) {
     if ($_SESSION['id_profilo'] == 1) {
         header("Location: /pages/admin/admin_area.php");
         exit();
-    } else {
-        header("Location: /pages/user/home_user.php");
-        exit();
     }
 }
 ?>
@@ -45,9 +42,11 @@ if (isset($_SESSION['username'])) {
             </div>
         </div>
 
-        <div class="mt-5">
-            <a href="/pages/public/discover.php" class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold">Scopri chi siamo</a>
-        </div>
+        <?php if (!isset($_SESSION['username'])): ?>
+            <div class="mt-5">
+                <a href="/pages/public/discover.php" class="btn btn-primary btn-lg px-5 py-3 rounded-pill fw-bold">Scopri chi siamo</a>
+            </div>
+        <?php endif; ?>
 
     </main>
 

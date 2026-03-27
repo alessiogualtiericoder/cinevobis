@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <button class="btn btn-primary" name="profile">Profile</button>
             <?php endif; ?>
 
-            <?php if (in_array($currentPage, ['sessions.php', 'add_film.php', 'users.php', 'edit_user.php', 'profile.php', 'admin_area.php', 'home_user.php'])): ?>
+            <?php if (in_array($currentPage, ['sessions.php', 'add_film.php', 'users.php', 'edit_user.php', 'profile.php', 'admin_area.php'])): ?>
                 <button class="btn btn-primary" name="profile">Profile</button>
             <?php endif; ?>
 
